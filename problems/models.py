@@ -1,13 +1,24 @@
 from django.db import models
 
+DIFFICULTY_CHOICES = (
+    ('Easy', 'Easy'),
+    ('Medium', 'Medium'),
+    ('Hard', 'Hard'),
+)
+
 class Problem(models.Model):
-    title = models.CharField(max_length=100)
-    code = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=200)
+    code = models.SlugField(unique=True)  # e.g., "two-sum"
     statement = models.TextField()
-    difficulty = models.CharField(max_length=20)
-    time_limit = models.FloatField()
-    memory_limit = models.IntegerField()
-    tags = models.CharField(max_length=200)
+    input_format = models.TextField()
+    output_format = models.TextField()
+    constraints = models.TextField()
+    sample_input = models.TextField()
+    sample_output = models.TextField()
+    time_limit = models.FloatField(default=1.0)  # in seconds
+    memory_limit = models.IntegerField(default=256)  # in MB
+    tags = models.JSONField(default=list)
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
 
     def __str__(self):
-        return self.title
+        return self.name
