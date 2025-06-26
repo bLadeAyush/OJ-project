@@ -10,7 +10,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("register/", form);
+      await api.post("users/register/", form);
       alert("Registration successful!");
     } catch (err) {
       console.error(err);

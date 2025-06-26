@@ -3,6 +3,9 @@ import Register from "./auth/Register";
 import Login from "./auth/Login";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
+import ProblemsList from "./pages/ProblemList";
+import ProblemDetail from "./pages/ProblemDetail";
+
 export default function App() {
   return (
     <Router>
@@ -18,6 +21,8 @@ export default function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/problems" element={<ProblemsList />} />
+        <Route path="/problems/:code" element={<ProblemDetail />} />
       </Routes>
     </Router>
   );

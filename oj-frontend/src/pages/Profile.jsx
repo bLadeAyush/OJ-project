@@ -8,7 +8,7 @@ export default function Profile() {
   const [bio, setBio] = useState("");
 
   useEffect(() => {
-    api.get("profile/").then((res) => {
+    api.get("users/profile/").then((res) => {
       setProfile(res.data);
       setBio(res.data.bio || "");
     });
@@ -16,7 +16,7 @@ export default function Profile() {
 
   const handleUpdate = () => {
     api
-      .put("profile/", {
+      .put("users/profile/", {
         bio: bio,
       })
       .then((res) => {

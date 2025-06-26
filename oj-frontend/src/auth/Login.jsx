@@ -12,7 +12,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("login/", form);
+      const res = await api.post("users/login/", form);
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
       navigate("/profile");
