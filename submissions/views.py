@@ -13,8 +13,8 @@ class SubmitCodeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        print("🔁 SubmitCodeView hit!")  # Debug
-        print("👤 User:", request.user)
+        print("SubmitCodeView hit!") 
+        print("User:", request.user)
 
         problem_code = request.data.get("problem_code")
         code = request.data.get("code")
@@ -26,19 +26,19 @@ class SubmitCodeView(APIView):
         try:
             problem = Problem.objects.get(code=problem_code)
         except Problem.DoesNotExist:
-            print("❌ Problem not found:", problem_code)
+            print("Problem not found:", problem_code)
             return Response({"error": "Problem not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Save submission to DB
+      
         submission = Submission.objects.create(
             user=request.user,
             problem=problem,
             code=code,
             language=language
         )
-        print("✅ Submission saved:", submission.id)
+        print("Submission saved:", submission.id)
 
-        # Trigger background evaluation task
+        
         evaluate_submission.delay(submission.id)
 
         return Response({

@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from problems.models import Problem
 
-# ✅ Use TextChoices for verdicts
+
 class Verdict(models.TextChoices):
     PENDING = 'PENDING', _('Pending')
     ACCEPTED = 'AC', _('Accepted')
@@ -12,7 +12,6 @@ class Verdict(models.TextChoices):
     RUNTIME_ERROR = 'RE', _('Runtime Error')
     COMPILATION_ERROR = 'CE', _('Compilation Error')
 
-# ✅ Use TextChoices for language options
 class Language(models.TextChoices):
     PYTHON = 'python', _('Python')
     CPP = 'cpp', _('C++')

@@ -19,7 +19,6 @@ def evaluate_submission(submission_id):
     input_data = problem.sample_input
     expected_output = problem.sample_output.strip()
 
-    # ✅ Use safe Windows-compatible base path
     base_path = os.path.join(os.path.expanduser("~"), "oj_temp")
     os.makedirs(base_path, exist_ok=True)
 
@@ -51,12 +50,12 @@ def evaluate_submission(submission_id):
         folder_path_docker = folder_path.replace("\\", "/")
         command = f'docker run --rm -v "{folder_path_docker}:/app" {image}'
 
-        # ✅ Debug logs
-        logger.info("📦 Folder path (host): %s", folder_path)
-        logger.info("🐳 Docker mount path: %s", folder_path_docker)
-        logger.info("🚀 Docker command: %s", command)
-        logger.info("📄 main.py exists? %s", os.path.exists(code_path))
-        logger.info("📄 input.txt exists? %s", os.path.exists(input_path))
+    
+        logger.info("Folder path (host): %s", folder_path)
+        logger.info("Docker mount path: %s", folder_path_docker)
+        logger.info("Docker command: %s", command)
+        logger.info("main.py exists? %s", os.path.exists(code_path))
+        logger.info("input.txt exists? %s", os.path.exists(input_path))
 
         result = subprocess.run(
             command,
@@ -72,8 +71,8 @@ def evaluate_submission(submission_id):
         submission.output = stdout
         submission.error = stderr
 
-        logger.info("✅ STDOUT: %s", stdout)
-        logger.error("❌ STDERR: %s", stderr)
+        logger.info("STDOUT: %s", stdout)
+        logger.error("STDERR: %s", stderr)
 
         if stderr:
             if "error" in stderr.lower():
@@ -88,16 +87,16 @@ def evaluate_submission(submission_id):
     except subprocess.TimeoutExpired:
         submission.verdict = "TLE"
         submission.error = "Time limit exceeded"
-        logger.error("🕒 Timeout during execution.")
+        logger.error("Timeout during execution.")
     except Exception as e:
         submission.verdict = "RE"
         submission.error = str(e)
-        logger.exception("🔥 Exception during evaluation:")
+        logger.exception("Exception during evaluation:")
     finally:
         submission.save()
-        logger.info("💾 Verdict saved: %s", submission.verdict)
+        logger.info("Verdict saved: %s", submission.verdict)
 
         try:
             subprocess.run(f'rm -rf "{folder_path}"', shell=True)
         except Exception as e:
-            logger.warning("🧹 Cleanup failed: %s", str(e))
+            logger.warning(" Cleanup failed: %s", str(e))
