@@ -2,25 +2,51 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { useAuth } from "../context/AuthContext";
-import api from "../api/axios"; // ✅ use shared axios instance
+import api from "../api/axios";
+import { Disclosure } from "@headlessui/react";
+import ChevronUpIcon from "@heroicons/react/24/solid/ChevronUpIcon";
 
 export default function ProblemDetail() {
+  const [submissions, setSubmissions] = useState([]);
+
   const [problem, setProblem] = useState(null);
   const { code } = useParams();
   const [language, setLanguage] = useState("python");
   const [code_p, setCode] = useState("");
   const [verdict, setVerdict] = useState("");
+  const [submissionId, setSubmissionId] = useState(null);
+  const [customInput, setCustomInput] = useState("");
+  const [output, setOutput] = useState("");
   const { user } = useAuth();
-
+  useEffect(() => {
+    api.get(`submissions/?problem=${code}`).then((res) => {
+      setSubmissions(res.data);
+    });
+  }, [code, verdict]);
   useEffect(() => {
     api
-      .get(`problems/${code}/`) // ✅ baseURL already includes /api/
+      .get(`problems/${code}/`)
       .then((res) => setProblem(res.data))
-      .catch((err) => {
-        console.error(err);
-        alert("Problem not found");
-      });
+      .catch(() => alert("Problem not found"));
   }, [code]);
+
+  useEffect(() => {
+    if (!submissionId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get(`submission/${submissionId}/`);
+        if (res.data.verdict !== "PENDING") {
+          setVerdict(res.data.verdict);
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error("Polling failed", err);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [submissionId]);
 
   const handleSubmit = async () => {
     try {
@@ -29,10 +55,25 @@ export default function ProblemDetail() {
         language,
         code: code_p,
       });
-      setVerdict(res.data.verdict);
+      setVerdict("PENDING");
+      setOutput("Run Code to see Output");
+      setSubmissionId(res.data.submission_id);
     } catch (err) {
-      console.error(err.response?.data); // 🔍 log the actual server error message
       alert("Submission failed: " + JSON.stringify(err.response?.data));
+    }
+  };
+
+  const handleRun = async () => {
+    try {
+      const res = await api.post("run/", {
+        language,
+        code: code_p,
+        input: customInput,
+      });
+      setOutput(res.data.output || "");
+      setVerdict(res.data.error ? `Error: ${res.data.error}` : "");
+    } catch (err) {
+      alert("Run failed: " + JSON.stringify(err.response?.data));
     }
   };
 
@@ -43,8 +84,6 @@ export default function ProblemDetail() {
       <h1 className="text-2xl font-bold">{problem.name}</h1>
       <p className="text-sm text-gray-500">Difficulty: {problem.difficulty}</p>
       <hr />
-
-      {/* Problem content */}
       <div>
         <h2 className="font-semibold">Problem Statement</h2>
         <p>{problem.statement}</p>
@@ -70,10 +109,8 @@ export default function ProblemDetail() {
         <pre className="bg-gray-100 p-2 rounded">{problem.sample_output}</pre>
       </div>
 
-      {/* Code editor */}
       <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-2">Submit Your Code</h3>
-
+        <h3 className="text-lg font-semibold mb-2">Code Editor</h3>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
@@ -98,17 +135,66 @@ export default function ProblemDetail() {
           }}
         />
 
-        <button
-          onClick={handleSubmit}
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Submit
-        </button>
+        <textarea
+          placeholder="Enter custom input..."
+          className="w-full p-2 border mt-4"
+          rows={4}
+          value={customInput}
+          onChange={(e) => setCustomInput(e.target.value)}
+        />
+
+        <div className="flex space-x-4 mt-4">
+          <button
+            onClick={handleRun}
+            className="bg-gray-600 text-white px-4 py-2 rounded"
+          >
+            Run
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Submit
+          </button>
+        </div>
 
         {verdict && (
           <p className="mt-4 font-bold text-green-600">Verdict: {verdict}</p>
         )}
+        {output && (
+          <div className="mt-4">
+            <h4 className="font-semibold">Output:</h4>
+            <pre className="bg-gray-100 p-2 rounded">{output}</pre>
+          </div>
+        )}
       </div>
+      {submissions.length > 0 && (
+        <div className="mt-10">
+          <h3 className="text-lg font-semibold mb-2">Your Past Submissions</h3>
+          {submissions.map((sub) => (
+            <Disclosure key={sub.id}>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left bg-gray-200 rounded-lg hover:bg-gray-300">
+                    <span>
+                      #{sub.id} | {sub.language} | {sub.verdict} |{" "}
+                      {new Date(sub.submitted_at).toLocaleString()}
+                    </span>
+                    <ChevronUpIcon
+                      className={`${
+                        open ? "transform rotate-180" : ""
+                      } w-5 h-5`}
+                    />
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="px-4 py-2 text-sm text-gray-700 whitespace-pre-wrap bg-gray-100 rounded">
+                    {sub.code}
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

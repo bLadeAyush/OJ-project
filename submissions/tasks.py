@@ -16,8 +16,11 @@ def evaluate_submission(submission_id):
 
     lang = submission.language
     code = submission.code
-    input_data = problem.sample_input
-    expected_output = problem.sample_output.strip()
+
+
+    test_cases = problem.test_cases or [
+        {"input": problem.sample_input, "output": problem.sample_output}
+    ]
 
     base_path = os.path.join(os.path.expanduser("~"), "oj_temp")
     os.makedirs(base_path, exist_ok=True)
@@ -37,8 +40,6 @@ def evaluate_submission(submission_id):
 
     with open(code_path, "w") as f:
         f.write(code)
-    with open(input_path, "w") as f:
-        f.write(input_data)
 
     try:
         image = {
@@ -50,37 +51,49 @@ def evaluate_submission(submission_id):
         folder_path_docker = folder_path.replace("\\", "/")
         command = f'docker run --rm -v "{folder_path_docker}:/app" {image}'
 
-    
         logger.info("Folder path (host): %s", folder_path)
-        logger.info("Docker mount path: %s", folder_path_docker)
         logger.info("Docker command: %s", command)
-        logger.info("main.py exists? %s", os.path.exists(code_path))
-        logger.info("input.txt exists? %s", os.path.exists(input_path))
 
-        result = subprocess.run(
-            command,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=10
-        )
+        all_passed = True
 
-        stdout = result.stdout.decode().strip()
-        stderr = result.stderr.decode().strip()
+        for index, case in enumerate(test_cases):
+            with open(input_path, "w") as f:
+                f.write(case["input"])
 
-        submission.output = stdout
-        submission.error = stderr
+            result = subprocess.run(
+                command,
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                timeout=10
+            )
 
-        logger.info("STDOUT: %s", stdout)
-        logger.error("STDERR: %s", stderr)
+            stdout = result.stdout.decode().strip()
+            stderr = result.stderr.decode().strip()
 
-        if stderr:
-            if "error" in stderr.lower():
-                submission.verdict = "CE"
-            else:
-                submission.verdict = "RE"
-        else:
-            submission.verdict = "AC" if stdout.strip() == expected_output else "WA"
+            submission.output = stdout
+            submission.error = stderr
+
+            logger.info("Test Case #%d", index + 1)
+            logger.info("Input: %s", case["input"])
+            logger.info("STDOUT: %s", stdout)
+            logger.error("STDERR: %s", stderr)
+
+            if stderr:
+                if "error" in stderr.lower():
+                    submission.verdict = "CE"
+                else:
+                    submission.verdict = "RE"
+                all_passed = False
+                break
+
+            if stdout != case["output"].strip():
+                submission.verdict = "WA"
+                all_passed = False
+                break
+
+        if all_passed:
+            submission.verdict = "AC"
 
         submission.time_taken = 0
 
@@ -99,4 +112,4 @@ def evaluate_submission(submission_id):
         try:
             subprocess.run(f'rm -rf "{folder_path}"', shell=True)
         except Exception as e:
-            logger.warning(" Cleanup failed: %s", str(e))
+            logger.warning("Cleanup failed: %s", str(e))
