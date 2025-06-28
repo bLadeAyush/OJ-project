@@ -1,8 +1,9 @@
 import { useState } from "react";
 import api from "../api/axios";
-
+import { useNavigate } from "react-router-dom";
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -12,6 +13,7 @@ export default function Register() {
     try {
       await api.post("users/register/", form);
       alert("Registration successful!");
+      navigate("/");
     } catch (err) {
       console.error(err);
       alert("Error during registration.");

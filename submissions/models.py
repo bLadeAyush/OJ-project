@@ -43,6 +43,7 @@ class Submission(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True, db_index=True)
     output = models.TextField(blank=True, null=True)
     error = models.TextField(blank=True, null=True)
+    feedback = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['-submitted_at']
