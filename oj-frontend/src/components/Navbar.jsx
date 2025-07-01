@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav className="bg-black text-white px-6 py-4 shadow-md z-100">
       <div className=" flex justify-around items-center w-screen">
         <div className="space-x-29 text-sm sm:text-base jet-brains-mono  ">
-          <NavLink to="/" label="Home" />
+          <NavLink to="/profile" label="Home" />
           <NavLink to="/leaderboard" label="Leaderboard" />
           <NavLink to="/problems" label="Problems" />
           <NavLink to="/contests" label="Contests" />
