@@ -13,11 +13,18 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@monaco-editor/react": "^4.7.0",
+    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/runtime": "^1.10.17",
     "@tailwindcss/vite": "^4.1.10",
     "axios": "^1.10.0",
+    "framer-motion": "^12.19.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.2"
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.6.2",
+    "react-toastify": "^11.0.5",
+    "rehype-highlight": "^7.0.2",
+    "rehype-raw": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

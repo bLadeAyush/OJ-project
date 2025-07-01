@@ -4,26 +4,31 @@ import uuid
 import time
 import requests
 import logging
+import markdown
 from django.conf import settings
 from .models import Submission
 from problems.models import Problem
 from celery import shared_task
 from dotenv import load_dotenv
+import google.generativeai as genai
 
 load_dotenv()
-api_token = os.getenv("HUGGINGFACE_API_TOKEN")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Only once globally
 logger = logging.getLogger(__name__)
-
 
 
 def run_docker_with_timeout(command_base, timeout_seconds):
     container_name = f"oj_{uuid.uuid4().hex[:8]}"
+    parts = command_base.strip().split()
 
-    parts = command_base.split()
+    if len(parts) < 3 or parts[0] != "docker" or "run" not in parts:
+        raise ValueError(f"Invalid Docker command: {command_base}")
+
     image = parts[-1]
-    volume_and_flags = " ".join(parts[:-1])
+    if image == "docker":
+        raise ValueError("🚨 Image name resolved as 'docker'. Check how you're constructing your docker run command.")
 
-    # Correctly place --name before image name
+    volume_and_flags = " ".join(parts[:-1])
     command = f'docker run --rm --name {container_name} {volume_and_flags} {image}'
 
     logger.info("Running Docker container: %s", container_name)
@@ -41,11 +46,12 @@ def run_docker_with_timeout(command_base, timeout_seconds):
         if time.time() - start_time > timeout_seconds:
             logger.warning("TLE detected. Killing container: %s", container_name)
             subprocess.run(f"docker kill {container_name}", shell=True)
-            return "", "Time limit exceeded", -9
+            return "", "Time limit exceeded", -9, timeout_seconds
         time.sleep(0.5)
 
     stdout, stderr = process.communicate()
-    return stdout.decode().strip(), stderr.decode().strip(), process.returncode
+    end_time = time.time()
+    return stdout.decode().strip(), stderr.decode().strip(), process.returncode, end_time - start_time
 
 
 @shared_task
@@ -93,13 +99,14 @@ def evaluate_submission(submission_id):
         logger.info("Docker base command: %s", docker_base_command)
 
         all_passed = True
+        total_time = 0.0
 
         for index, case in enumerate(test_cases):
             with open(input_path, "w") as f:
                 f.write(case["input"])
 
-            stdout, stderr, return_code = run_docker_with_timeout(docker_base_command, 10)
-
+            stdout, stderr, return_code, exec_time = run_docker_with_timeout(docker_base_command, 10)
+            total_time += exec_time
             submission.output = stdout
             submission.error = stderr
 
@@ -129,7 +136,8 @@ def evaluate_submission(submission_id):
         if all_passed:
             submission.verdict = "AC"
 
-        submission.time_taken = 0
+        submission.time_taken = round(total_time / len(test_cases), 3)
+        logger.info("Avg Time Taken: %s", submission.time_taken)
 
     except Exception as e:
         submission.verdict = "RE"
@@ -146,54 +154,45 @@ def evaluate_submission(submission_id):
             logger.warning("Cleanup failed: %s", str(e))
 
         if submission.verdict in ["WA", "RE", "CE", "TLE"]:
-            submission.feedback = generate_ai_feedback(
+            feedback = generate_ai_feedback(
                 problem, lang, statement, code,
                 submission.error, test_cases[0]["input"], test_cases[0]["output"]
             )
-            logger.info("Feedback generated: %s", submission.feedback)
+            submission.feedback = feedback
+            logger.info("Feedback generated")
             submission.save()
 
 
-def generate_ai_feedback(problem, language, statement, code, stderr, input_data, output, model="mistralai/Mixtral-8x7B-Instruct-v0.1"):
-    token = api_token
-    if not token:
-        logger.warning("TOKEN is not set. AI feedback is disabled.")
-        return "AI feedback is not configured."
 
-    prompt = f"""The following code failed a programming test.
-Problem Statement:
-{problem}
-{statement}
-Code in {language}:
-{code}
-Input:
-{input_data}
-Expected output:
-{output}
-Error:
-{stderr}
-Wrong Answer
-What could be the reason for the failure and how can the user fix it?"""
-
+def generate_ai_feedback(problem, language, statement, code, stderr, input_data, output, model="models/gemini-1.5-flash-latest"):
     try:
-        response = requests.post(
-            f"https://api-inference.huggingface.co/models/{model}",
-            headers={"Authorization": f"Bearer {token}"},
-            json={"inputs": prompt},
-            timeout=30
-        )
-        response.raise_for_status()
-        json_response = response.json()
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-        logging.info("🤖 Raw HF response: %s", json_response)
+        prompt = f"""The following code failed a programming test.
 
-        if isinstance(json_response, list) and "generated_text" in json_response[0]:
-            return json_response[0]["generated_text"]
-        elif "generated_text" in json_response:
-            return json_response["generated_text"]
-        else:
-            return "🤷 Unexpected feedback format: " + str(json_response)
+📘 Problem Statement:
+{statement}
 
+💻 Code in {language}:
+{code}
+
+📥 Input:
+{input_data}
+
+📤 Expected Output:
+{output}
+
+❌ Error:
+{stderr or "Wrong Answer"}
+
+🤔 What could be the reason for the failure and how can the user fix it?
+Please give corrected code if possible.
+"""
+
+        model = genai.GenerativeModel(model)
+        response = model.generate_content(prompt)
+
+        return response.text if hasattr(response, 'text') else "⚠️ Unexpected Gemini response format."
     except Exception as e:
-        logging.error("❌ AI Feedback error: %s", e)
+        logging.error("❌ Gemini AI Feedback error: %s", e)
         return "No feedback generated due to an error."

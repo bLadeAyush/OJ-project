@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import SubmitCodeView , SubmissionListView
-from .views import RunCodeView , SubmissionStatusView
+from .views import RunCodeView , SubmissionStatusView , LeaderboardView
+
 
 
 urlpatterns = [
@@ -8,4 +9,5 @@ urlpatterns = [
     path("run/", RunCodeView.as_view(), name="run-code"),
     path('submission/<int:submission_id>/', SubmissionStatusView.as_view()),
     path("submissions/", SubmissionListView.as_view(), name="submission-list"),
+    path("leaderboard/", LeaderboardView.as_view(), name="leaderboard"),
 ]

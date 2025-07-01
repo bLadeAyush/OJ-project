@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import { useAuth } from "../context/AuthContext";
+import ReactMarkdown from "react-markdown";
 import api from "../api/axios";
 import { Disclosure } from "@headlessui/react";
 import ChevronUpIcon from "@heroicons/react/24/solid/ChevronUpIcon";
@@ -18,6 +18,14 @@ export default function ProblemDetail() {
   const [submissionId, setSubmissionId] = useState(null);
   const [customInput, setCustomInput] = useState("");
   const [output, setOutput] = useState("");
+  const defaultTemplates = {
+    python: `# Write your code here\ndef main():\n    # your logic\n    pass\n\nif __name__ == "__main__":\n    main()`,
+
+    cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // your logic here\n    return 0;\n}`,
+
+    java: `import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // your logic here\n    }\n}`,
+  };
+
   useEffect(() => {
     api.get(`submissions/?problem=${code}`).then((res) => {
       setSubmissions(res.data);
@@ -29,6 +37,14 @@ export default function ProblemDetail() {
       .then((res) => setProblem(res.data))
       .catch(() => alert("Problem not found"));
   }, [code]);
+  useEffect(() => {
+    const savedCode = localStorage.getItem(`code_${language}_${code}`);
+    if (savedCode) {
+      setCode(savedCode);
+    } else {
+      setCode(defaultTemplates[language] || "");
+    }
+  }, [language, code]);
 
   useEffect(() => {
     if (!submissionId) return;
@@ -126,7 +142,10 @@ export default function ProblemDetail() {
           language={language}
           theme="vs"
           value={code_p}
-          onChange={(value) => setCode(value)}
+          onChange={(value) => {
+            setCode(value);
+            localStorage.setItem(`code_${language}_${code}`, value);
+          }}
           options={{
             fontSize: 14,
             fontFamily: "Fira Code, monospace",
@@ -187,7 +206,6 @@ export default function ProblemDetail() {
                 {sub.code}
               </Disclosure.Panel>
 
-              {/* ✅ Add this block INSIDE the map */}
               {sub.feedback && (
                 <div className="mt-2 ml-4">
                   <button
@@ -202,9 +220,9 @@ export default function ProblemDetail() {
                     {feedbackOpen[sub.id] ? "Hide" : "View"} Feedback
                   </button>
                   {feedbackOpen[sub.id] && (
-                    <pre className="mt-2 p-2 bg-yellow-100 rounded whitespace-pre-wrap">
-                      {sub.feedback}
-                    </pre>
+                    <div className="mt-2 p-2 bg-yellow-100 rounded whitespace-pre-wrap">
+                      <ReactMarkdown>{sub.feedback}</ReactMarkdown>
+                    </div>
                   )}
                 </div>
               )}

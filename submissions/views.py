@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated , AllowAny
 from rest_framework import status
 from .tasks import evaluate_submission
 from rest_framework.generics import ListAPIView
-
+from django.db.models import Count, Avg, Case, When, IntegerField, Q ,Sum
+from users.models import User
+from .models import Submission
 from problems.models import Problem
 from .models import Submission
 from .serializers import SubmissionSerializer
@@ -113,3 +115,38 @@ class SubmissionListView(ListAPIView):
         if problem_code:
             queryset = queryset.filter(problem__code=problem_code)
         return queryset.order_by("-submitted_at")
+
+
+class LeaderboardView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        users = User.objects.annotate(
+            total_ac=Count(
+                'submissions',
+                filter=Q(submissions__verdict='AC'),
+                distinct=True
+            ),
+            total_points=Sum(
+                Case(
+                    When(submissions__verdict='AC', submissions__problem__difficulty='easy', then=100),
+                    When(submissions__verdict='AC', submissions__problem__difficulty='medium', then=200),
+                    When(submissions__verdict='AC', submissions__problem__difficulty='hard', then=300),
+                    default=0,
+                    output_field=IntegerField()
+                )
+            ),
+            avg_time=Avg('submissions__time_taken', filter=Q(submissions__verdict='AC'))
+        ).order_by('-total_ac', 'avg_time')
+
+        data = [
+            {
+                "username": user.username,
+                "total_ac": user.total_ac or 0,
+                "total_points": user.total_points or 0,
+                "avg_time": round(user.avg_time or 0, 3)
+            }
+            for user in users
+        ]
+
+        return Response(data)
