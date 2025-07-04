@@ -31,6 +31,7 @@ html {
   margin: 1px;
   transition: 2s;
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow: 0 0 0 4px white;
 }
 .hexagon:hover {
   background: #0f0;

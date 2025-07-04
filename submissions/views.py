@@ -129,9 +129,9 @@ class LeaderboardView(APIView):
             ),
             total_points=Sum(
                 Case(
-                    When(submissions__verdict='AC', submissions__problem__difficulty='easy', then=100),
-                    When(submissions__verdict='AC', submissions__problem__difficulty='medium', then=200),
-                    When(submissions__verdict='AC', submissions__problem__difficulty='hard', then=300),
+                    When(submissions__verdict='AC', submissions__problem__difficulty='Easy', then=100),
+                    When(submissions__verdict='AC', submissions__problem__difficulty='Medium', then=200),
+                    When(submissions__verdict='AC', submissions__problem__difficulty='Hard', then=300),
                     default=0,
                     output_field=IntegerField()
                 )

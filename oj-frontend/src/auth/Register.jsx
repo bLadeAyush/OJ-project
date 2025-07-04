@@ -34,8 +34,8 @@ const Register = () => {
         toast.error(res.data.message || "Something went wrong");
       }
     } catch (err) {
-      console.error("Register error:", err);
-      toast.error(err.response?.data?.message || "Registration failed.");
+      console.log(err.response.data);
+      toast.error(err.response.data.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -73,8 +73,6 @@ const Register = () => {
           <p className="text-sm text-center text-gray-500 mb-4">
             Join us to explore more!
           </p>
-
-          {/* Full Name */}
           <div className="border px-6 py-2 flex items-center gap-2 rounded-full mt-4">
             <img src={assets.user_icon} alt="user" width={16} />
             <input
