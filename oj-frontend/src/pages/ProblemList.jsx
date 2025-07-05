@@ -112,7 +112,6 @@ export default function ProblemsList() {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
               <BookOpen className="w-8 h-8 text-cyan-400" />
@@ -126,10 +125,8 @@ export default function ProblemsList() {
             </p>
           </div>
 
-          {/* Filters */}
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 mb-8">
             <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search */}
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
@@ -141,7 +138,6 @@ export default function ProblemsList() {
                 />
               </div>
 
-              {/* Difficulty Filter */}
               <div className="relative">
                 <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <select
@@ -157,7 +153,6 @@ export default function ProblemsList() {
               </div>
             </div>
 
-            {/* Results Count */}
             <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
               <TrendingUp className="w-4 h-4" />
               <span>
@@ -166,7 +161,6 @@ export default function ProblemsList() {
             </div>
           </div>
 
-          {/* Problems Grid */}
           {filteredProblems.length > 0 ? (
             <div className="grid gap-4">
               {filteredProblems.map((problem) => {
@@ -176,7 +170,6 @@ export default function ProblemsList() {
                   <Link to={`/problems/${problem.code}`} key={problem.id}>
                     <div className="group bg-gray-800/30 hover:bg-gray-700/40 border border-gray-700/50 hover:border-cyan-500/30 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10 hover:scale-[1.01]">
                       <div className="flex items-start justify-between gap-4">
-                        {/* Problem Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-3">
                             <h3 className="text-xl font-semibold text-white group-hover:text-cyan-400 transition-colors truncate">
@@ -190,7 +183,6 @@ export default function ProblemsList() {
                             </div>
                           </div>
 
-                          {/* Tags */}
                           <div className="flex items-center gap-2 flex-wrap">
                             <Tag className="w-4 h-4 text-gray-400" />
                             {problem.tags.map((tag, index) => (
@@ -204,8 +196,7 @@ export default function ProblemsList() {
                           </div>
                         </div>
 
-                        {/* Arrow Icon */}
-                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 mt-4 transition-opacity ">
                           <div className="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center">
                             <svg
                               className="w-4 h-4 text-cyan-400"

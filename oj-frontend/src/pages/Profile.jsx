@@ -84,17 +84,17 @@ export default function Profile() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
+    <div className="relative h-screen overflow-hidden bg-black">
       <Navbar />
 
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <Spline
           scene="https://prod.spline.design/5kPlEdKfHEk6BZe5/scene.splinecode"
           showSplineWatermark={false}
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/60 z-10"></div>
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/60 z-10 pointer-events-none"></div>
 
       <div className="relative z-20 min-h-screen p-4 lg:p-8">
         <div className="absolute top-20 left-4 lg:left-8 max-w-sm">
@@ -136,9 +136,7 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Top Right - Stats Cards */}
         <div className="absolute top-20 right-4 lg:right-8 space-y-4 max-w-xs">
-          {/* Streak Card */}
           <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-6 text-center shadow-2xl shadow-orange-500/10">
             <div className="flex justify-center mb-3">
               <Flame className="w-10 h-10 text-orange-400" />
@@ -160,7 +158,6 @@ export default function Profile() {
             <div className="text-sm text-gray-300">Badges</div>
           </div>
 
-          {/* Days Active Card */}
           <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 text-center shadow-2xl shadow-green-500/10">
             <div className="flex justify-center mb-3">
               <Calendar className="w-10 h-10 text-green-400" />
@@ -175,7 +172,6 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Bottom Left - Bio Section */}
         <div className="absolute bottom-8 left-4 lg:left-8 max-w-md">
           <div className="bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
@@ -233,63 +229,8 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Bottom Right - Achievements */}
-        <div className="absolute bottom-8 right-4 lg:right-8 max-w-sm">
-          <div className="bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-cyan-400" />
-              Achievements
-            </h2>
-
-            {profile.badges?.length > 0 ? (
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                {profile.badges.map((badge, index) => (
-                  <div
-                    key={index}
-                    className="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 border border-yellow-400/30 text-yellow-400 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2"
-                  >
-                    <Star className="w-3 h-3" />
-                    {badge}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <Award className="w-12 h-12 text-gray-600 mx-auto mb-2" />
-                <p className="text-gray-400 text-sm">No badges yet</p>
-                <p className="text-gray-500 text-xs">
-                  Complete challenges to earn badges!
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Center Bottom - Welcome Message */}
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-          <div className="bg-gray-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl px-8 py-4 shadow-2xl shadow-cyan-500/10">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent text-center alfa-slab-one-regular">
-              Welcome to Your Profile
-            </h1>
-            <p className="text-gray-300 text-center text-sm mt-2">
-              Your coding journey continues here
-            </p>
-          </div>
-        </div>
-
-        <div className="fixed top-1/2 left-4 transform -translate-y-1/2 space-y-4 z-30">
-          <button className="w-12 h-12 bg-cyan-500/20 hover:bg-cyan-500/30 backdrop-blur-sm border border-cyan-500/30 rounded-full flex items-center justify-center text-cyan-400 transition-colors shadow-lg">
-            <Settings className="w-5 h-5" />
-          </button>
-          <button className="w-12 h-12 bg-purple-500/20 hover:bg-purple-500/30 backdrop-blur-sm border border-purple-500/30 rounded-full flex items-center justify-center text-purple-400 transition-colors shadow-lg">
-            <Trophy className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="fixed bottom-5 right-5 z-30">
-          <button className="bg-gray-900/80 backdrop-blur-sm hover:bg-gray-800/80 text-white px-6 py-3 rounded-full border border-gray-700/50 transition-colors shadow-lg">
-            Contact us
-          </button>
+        <div className="fixed bottom-5 right-5 z-30 bg-black text-black w-[150px] h-[38px]">
+          Contact us
         </div>
       </div>
 

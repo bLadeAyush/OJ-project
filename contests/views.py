@@ -10,6 +10,10 @@ from django.utils.timezone import now
 from .models import Contest, ContestProblem, ContestRegistration
 from rest_framework.generics import ListAPIView
 from submissions.models import Submission
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Min
+from users.models import User  
 
 
 class ContestListView(generics.ListAPIView):
@@ -59,16 +63,51 @@ class ContestProblemsView(ListAPIView):
 
 
 
-# class ContestProblemLeaderboardView(ListAPIView):
-#     serializer_class = LeaderboardEntrySerializer
-#     permission_classes = [permissions.AllowAny]  # Or IsAuthenticated if needed
+class ContestLeaderboardView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-#     def get_queryset(self):
-#         contest_id = self.kwargs['contest_id']
-#         problem_id = self.kwargs['problem_id']
+   
+    def get(self,request, contest_id):
+        try:
+            contest = Contest.objects.get(id=contest_id)
+        except Contest.DoesNotExist:
+            return Response({"error": "Contest not found"}, status=404)
+
+        if now() < contest.start_time:
+            return Response({"error": "Contest has not started"}, status=403)
+
         
-#         return Submission.objects.filter(
-#             contest_id=contest_id,
-#             problem_id=problem_id,
-#             verdict='AC'
-#         ).order_by('created_at').select_related('user')
+        contest_problem_ids = ContestProblem.objects.filter(contest=contest).values_list("problem_id", flat=True)
+
+        
+        ac_subs = (
+            Submission.objects
+            .filter(problem_id__in=contest_problem_ids, verdict="AC", submitted_at__lte=contest.end_time)
+            .values("user", "problem")
+            .annotate(first_ac=Min("submitted_at"))
+        )
+
+    
+        leaderboard = {}
+        for sub in ac_subs:
+            user_id = sub["user"]
+            if user_id not in leaderboard:
+                leaderboard[user_id] = {"solved": 0, "time": 0}
+            leaderboard[user_id]["solved"] += 1
+            leaderboard[user_id]["time"] += int((sub["first_ac"] - contest.start_time).total_seconds())
+
+        
+        users = User.objects.in_bulk(leaderboard.keys())
+        result = []
+        for user_id, stats in leaderboard.items():
+            result.append({
+                "user_id": user_id,
+                "username": users[user_id].username,
+                "solved": stats["solved"],
+                "time": stats["time"]
+            })
+
+        
+        result.sort(key=lambda x: (-x["solved"], x["time"]))
+
+        return Response(result)

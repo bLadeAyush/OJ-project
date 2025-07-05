@@ -20,6 +20,7 @@ class Problem(models.Model):
     tags = models.JSONField(default=list)
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
     test_cases = models.JSONField(default=list)
+    is_contest_only = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

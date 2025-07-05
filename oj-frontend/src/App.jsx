@@ -9,6 +9,8 @@ import Leaderboard from "./pages/Leaderboard";
 import { ToastContainer } from "react-toastify";
 import ContestPage from "./pages/ContestPage";
 import "react-toastify/dist/ReactToastify.css";
+import ContestProblemsPage from "./pages/ContestProblemPage";
+import ContestLeaderboard from "./pages/ContestLeaderboard";
 
 export default function App() {
   return (
@@ -30,6 +32,14 @@ export default function App() {
         <Route path="/problems/:code" element={<ProblemDetail />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/contests" element={<ContestPage />} />
+        <Route
+          path="/contests/:id/problems"
+          element={<ContestProblemsPage />}
+        ></Route>
+        <Route
+          path="/contests/:id/leaderboard"
+          element={<ContestLeaderboard />}
+        ></Route>
       </Routes>
     </Router>
   );

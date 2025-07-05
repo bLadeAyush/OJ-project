@@ -29,7 +29,7 @@ class ContestRegistrationSerializer(serializers.ModelSerializer):
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
-        fields = ['id', 'title', 'description', 'time_limit', 'memory_limit']
+        fields = '__all__'
 
 class ContestProblemSerializer(serializers.ModelSerializer):
     problem = ProblemSerializer()
@@ -37,3 +37,4 @@ class ContestProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContestProblem
         fields = ['label', 'problem']
+

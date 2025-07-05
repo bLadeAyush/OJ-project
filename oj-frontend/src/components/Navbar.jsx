@@ -3,7 +3,7 @@ import { assets } from "../assets/assets.js";
 export default function Navbar() {
   return (
     <nav className="bg-black text-white px-6  shadow-md z-100">
-      <div className=" flex justify-between items-center w-screen pr-6">
+      <div className=" flex justify-between items-center w-screen pr-6 py-2">
         <img src={assets.logoCode} alt="Logo" width={140} />
         <div className="space-x-21 text-sm sm:text-base jet-brains-mono mr-10">
           <NavLink to="/profile" label="Home" />

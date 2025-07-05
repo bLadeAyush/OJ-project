@@ -7,7 +7,7 @@ class ProblemListView(generics.ListAPIView):
     serializer_class = ProblemSerializer
 
     def get_queryset(self):
-        queryset = Problem.objects.all()
+        queryset = Problem.objects.filter(is_contest_only=False)
         difficulty = self.request.query_params.get("difficulty")
         tag = self.request.query_params.get("tag")
 

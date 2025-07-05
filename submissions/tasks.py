@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Only once globally
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  
 logger = logging.getLogger(__name__)
 
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def evaluate_submission(submission_id):
     submission = Submission.objects.get(id=submission_id)
     problem = submission.problem
-
+    statement = problem.statement
     lang = submission.language
     code = submission.code
 
@@ -119,21 +119,21 @@ def evaluate_submission(submission_id):
     finally:
         submission.save()
         logger.info("Verdict saved: %s", submission.verdict)
+        if submission.verdict in ["WA", "RE", "CE", "TLE" , "AC"]:
+                    feedback = generate_ai_feedback(
+                        problem, lang, statement, code,
+                        submission.error, test_cases[0]["input"], test_cases[0]["output"]
+                    )
+                    submission.feedback = feedback
+                    logger.info("Feedback generated")
+                    submission.save()    
+
 
         try:
             subprocess.run(f'rm -rf "{folder_path}"', shell=True)
         except Exception as e:
             logger.warning("Cleanup failed: %s", str(e))
-            if submission.verdict in ["WA", "RE", "CE", "TLE"]:
-                feedback = generate_ai_feedback(
-                    problem, lang, statement, code,
-                    submission.error, test_cases[0]["input"], test_cases[0]["output"]
-                )
-                submission.feedback = feedback
-                logger.info("Feedback generated")
-                submission.save()
-
-
+        
 
 def generate_ai_feedback(problem, language, statement, code, stderr, input_data, output, model="models/gemini-1.5-flash-latest"):
     try:

@@ -93,7 +93,6 @@ export default function ContestPage() {
             : "bg-gradient-to-br from-blue-900/20 to-cyan-800/20 border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10"
         }`}
       >
-        {/* Status Badge */}
         <div className="absolute top-4 right-4 z-10">
           {status === "live" && (
             <div className="flex items-center gap-1 bg-green-500 text-black px-3 py-1 rounded-full text-xs font-bold animate-pulse">
@@ -116,18 +115,15 @@ export default function ContestPage() {
         </div>
 
         <div className="p-6">
-          {/* Contest Title */}
           <h2 className="text-2xl font-bold text-white mb-3 pr-20">
             {contest.title}
           </h2>
 
-          {/* Description */}
           <p className="text-gray-400 mb-6 line-clamp-2">
             {contest.description ||
               "Join this exciting coding contest and test your programming skills!"}
           </p>
 
-          {/* Contest Details */}
           <div className="space-y-3 mb-6">
             <div className="flex items-center gap-3 text-sm">
               <div className="flex items-center gap-2 text-green-400">
@@ -150,7 +146,6 @@ export default function ContestPage() {
             </div>
           </div>
 
-          {/* Action Button */}
           <div className="flex gap-3">
             {isPast ? (
               <button
@@ -164,7 +159,7 @@ export default function ContestPage() {
               new Date(contest.start_time) <= now ? (
                 <button
                   onClick={() =>
-                    (window.location.href = `/contest/${contest.id}/problems`)
+                    (window.location.href = `/contests/${contest.id}/problems`)
                   }
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-black rounded-xl font-bold transition-all duration-200 shadow-lg hover:shadow-green-500/30"
                 >
@@ -192,7 +187,6 @@ export default function ContestPage() {
           </div>
         </div>
 
-        {/* Decorative Elements */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
       </div>
@@ -218,7 +212,6 @@ export default function ContestPage() {
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
         <div className="max-w-6xl mx-auto px-6 py-8">
-          {/* Upcoming Contests Section */}
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-8">
               <Trophy className="w-8 h-8 text-cyan-400" />
@@ -244,7 +237,6 @@ export default function ContestPage() {
             )}
           </div>
 
-          {/* Past Contests Section */}
           <div>
             <div className="flex items-center gap-3 mb-8">
               <Flag className="w-8 h-8 text-gray-400" />
