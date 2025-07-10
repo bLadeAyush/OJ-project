@@ -147,7 +147,6 @@ export default function Profile() {
             <div className="text-sm text-gray-300">Day Streak</div>
           </div>
 
-          {/* Badges Card */}
           <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 text-center shadow-2xl shadow-purple-500/10">
             <div className="flex justify-center mb-3">
               <Award className="w-10 h-10 text-purple-400" />

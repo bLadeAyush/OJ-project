@@ -196,7 +196,7 @@ export default function ProblemsList() {
                           </div>
                         </div>
 
-                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 mt-4 transition-opacity ">
+                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 mt-4 transition-opacity">
                           <div className="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center">
                             <svg
                               className="w-4 h-4 text-cyan-400"

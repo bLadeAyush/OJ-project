@@ -5,3 +5,4 @@ from .models import Problem
 class ProblemAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'difficulty')
     search_fields = ('name', 'tags')
+    
