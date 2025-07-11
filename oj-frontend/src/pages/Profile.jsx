@@ -157,7 +157,7 @@ export default function Profile() {
             <div className="text-sm text-gray-300">Badges</div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 text-center shadow-2xl shadow-green-500/10">
+          <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 text-center shadow-s shadow-green-500/10">
             <div className="flex justify-center mb-3">
               <Calendar className="w-10 h-10 text-green-400" />
             </div>

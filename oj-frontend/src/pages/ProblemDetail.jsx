@@ -41,7 +41,7 @@ export default function ProblemDetail() {
   const defaultTemplates = {
     python: `# Write your solution here\ndef solve():\n    # Your code goes here\n    pass\n\nif __name__ == "__main__":\n    solve()`,
     cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n    \n    // Your code here\n    \n    return 0;\n}`,
-    java: `import java.util.*;\nimport java.io.*;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        \n        // Your code here\n        \n        sc.close();\n    }\n}`,
+    java: `import java.util.*;\nimport java.io.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        \n        // Your code here\n        \n        sc.close();\n    }\n}`,
   };
 
   useEffect(() => {
@@ -169,7 +169,6 @@ export default function ProblemDetail() {
     <>
       <Navbar />
       <div className="flex flex-col lg:flex-row bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white min-h-screen">
-        {/* Problem Panel */}
         <div className="lg:w-1/2 border-r border-gray-800">
           <div className="p-6 border-b border-gray-800 bg-gray-900/50">
             <div className="flex items-start justify-between mb-4">
@@ -185,7 +184,6 @@ export default function ProblemDetail() {
           </div>
 
           <div className="p-6 overflow-y-auto max-h-[calc(100vh-8rem)] space-y-6">
-            {/* Problem Statement */}
             <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/50">
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="w-5 h-5 text-cyan-400" />

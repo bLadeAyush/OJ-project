@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: oj-web
+    env: docker
+    plan: free
+    envVars:
+      - key: SERVICE
+        value: web
+      - key: DATABASE_URL
+        value: your-db-url
+      - key: REDIS_URL
+        value: your-redis-url
+
+  - type: worker
+    name: oj-celery
+    env: docker
+    plan: free
+    envVars:
+      - key: SERVICE
+        value: celery
+      - key: DATABASE_URL
+        value: your-db-url
+      - key: REDIS_URL
+        value: redis://redis:6379/0
+
+  - type: worker
+    name: oj-beat
+    env: docker
+    plan: free
+    envVars:
+      - key: SERVICE
+        value: beat
+      - key: DATABASE_URL
+        value: your-db-url
+      - key: REDIS_URL
+        value: redis://redis:6379/0
