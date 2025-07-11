@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-3^g&2#0wlko6wzgx!ntg-gaf%0o#sqd)fu%^)*m*#vc(f7&dt6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['oj-project-o81i.onrender.com',
+    'localhost',
+    '127.0.0.1']
 
 
 # Application definition
@@ -141,5 +143,3 @@ CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = 'users.User'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-
-HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
