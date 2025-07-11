@@ -140,7 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    "https://oj-project-alpha.vercel.app",  # your frontend URL
+    "https://oj-project-alpha.vercel.app",
 ]
 
 AUTH_USER_MODEL = 'users.User'

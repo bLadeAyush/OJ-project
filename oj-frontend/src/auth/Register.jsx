@@ -89,7 +89,7 @@ const Register = () => {
             Required. 150 characters or fewer. Letters, digits and @/./+/-/_
             only.
           </p>
-          {/* Email */}
+
           <div className="border px-6 py-2 flex items-center gap-2 rounded-full mt-4">
             <img src={assets.email_icon} alt="email" width={16} />
             <input
@@ -103,7 +103,6 @@ const Register = () => {
             />
           </div>
 
-          {/* Password */}
           <div className="border px-6 py-2 flex items-center gap-2 rounded-full mt-4">
             <img src={assets.lock_icon} alt="lock" width={16} />
             <input
