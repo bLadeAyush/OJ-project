@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/",
+  baseURL: `${import.meta.env.VITE_API_URL}/api/`,
 });
+console.log("API Base URL:", import.meta.env.VITE_API_URL);
 
 api.interceptors.response.use(
   (response) => response,
@@ -18,16 +19,12 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refresh = localStorage.getItem("refresh");
-        const res = await axios.post(
-          "http://127.0.0.1:8000/api/users/token/refresh/",
-          {
-            refresh,
-          }
-        );
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/`, {
+          refresh,
+        });
 
         const newAccess = res.data.access;
         localStorage.setItem("access", newAccess);
-
         originalRequest.headers.Authorization = `Bearer ${newAccess}`;
         return api(originalRequest);
       } catch (err) {
