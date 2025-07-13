@@ -30,7 +30,7 @@ api.interceptors.response.use(
         console.error("Token refresh failed", err);
         localStorage.removeItem("access");
         localStorage.removeItem("refresh");
-        window.location.href = "/login";
+        window.location.href = "/";
       }
     }
 

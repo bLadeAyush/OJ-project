@@ -1,32 +1,27 @@
-# Dockerfile
 FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Environment setup
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Set work directory
+# Working directory
 WORKDIR /code
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y netcat-openbsd gcc
+RUN apt-get update && apt-get install -y gcc netcat-openbsd
 
-# Install Python dependencies
+
+# Install Python packages
 COPY requirements.txt /code/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copy project files
+
+RUN apt-get update && \
+    apt-get install -y docker.io && \
+    apt-get clean
+# Copy project
 COPY . /code/
 
-# Default service
-ENV SERVICE=web
-
-# Entrypoint logic
-CMD if [ "$SERVICE" = "web" ]; then \
-      gunicorn oj_backend.wsgi:application --bind 0.0.0.0:8000; \
-    elif [ "$SERVICE" = "celery" ]; then \
-      celery -A oj_backend worker --loglevel=info; \
-    elif [ "$SERVICE" = "beat" ]; then \
-      celery -A oj_backend beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler; \
-    fi
+# Default command (overridden in docker-compose)
+CMD ["gunicorn", "oj_backend.wsgi:application", "--bind", "0.0.0.0:8000"]

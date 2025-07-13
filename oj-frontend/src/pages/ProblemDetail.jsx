@@ -379,10 +379,13 @@ export default function ProblemDetail() {
             <div className="space-y-2">
               {submissions.length > 0 ? (
                 submissions.map((sub) => (
-                  <Disclosure key={sub.id}>
+                  <Disclosure as="div" key={sub.id}>
                     {({ open }) => (
                       <>
-                        <Disclosure.Button className="flex justify-between items-center w-full px-4 py-3 bg-gray-800/50 hover:bg-gray-700/50 text-white rounded-lg transition-colors border border-gray-700/50">
+                        <Disclosure.Button
+                          as="div"
+                          className="flex justify-between items-center w-full px-4 py-3 bg-gray-800/50 hover:bg-gray-700/50 text-white rounded-lg transition-colors border border-gray-700/50"
+                        >
                           <div className="flex items-center gap-3">
                             <span className="text-sm text-gray-400">
                               #{sub.id}
@@ -408,7 +411,10 @@ export default function ProblemDetail() {
                             } w-5 h-5 text-gray-400 transition-transform`}
                           />
                         </Disclosure.Button>
-                        <Disclosure.Panel className="mt-2 p-4 bg-gray-900/50 rounded-lg border border-gray-700/50">
+                        <Disclosure.Panel
+                          as="div"
+                          className="mt-2 p-4 bg-gray-900/50 rounded-lg border border-gray-700/50"
+                        >
                           <pre className="text-sm text-gray-300 whitespace-pre-wrap overflow-x-auto">
                             {sub.code}
                           </pre>
@@ -430,7 +436,7 @@ export default function ProblemDetail() {
                               </button>
                               {feedbackOpen[sub.id] && (
                                 <div className="mt-3 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                                  <div className="prose prose-invert prose-sm max-w-none">
+                                  <div className="prose prose-invert prose-sm max-w-[600px]">
                                     <ReactMarkdown>
                                       {sub.feedback}
                                     </ReactMarkdown>

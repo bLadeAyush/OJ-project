@@ -25,9 +25,8 @@ SECRET_KEY = 'django-insecure-3^g&2#0wlko6wzgx!ntg-gaf%0o#sqd)fu%^)*m*#vc(f7&dt6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['oj-project-o81i.onrender.com',
-    'localhost',
-    '127.0.0.1']
+ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'oj_backend.urls'
@@ -139,9 +138,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "https://oj-project-alpha.vercel.app",
-]
 
 AUTH_USER_MODEL = 'users.User'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
