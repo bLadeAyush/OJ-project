@@ -57,7 +57,15 @@ def evaluate_submission(submission_id):
         }[lang]
 
         folder_path_docker = folder_path.replace("\\", "/")
-        command = f'docker run --rm -v "{folder_path_docker}:/app" {image}'
+        run_cmd = {
+            "python": "python3 main.py < input.txt",
+            "cpp": "g++ main.cpp -o main && ./main < input.txt",
+            "java": "javac Main.java && java Main < input.txt"
+            }[lang]
+
+        command = f'docker run --rm -v "{folder_path_docker}:/app" -w /app {image} sh -c "{run_cmd}"'
+
+
         logger.info(f"Image selected: {image}")
 
         logger.info("Folder path (host): %s", folder_path)

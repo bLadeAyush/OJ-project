@@ -77,7 +77,14 @@ class RunCodeView(APIView):
 
         image = {"python": "oj-python", "cpp": "oj-cpp", "java": "oj-java"}[language]
         folder_docker = folder.replace("\\", "/")
-        command = f'docker run --rm -v "{folder_docker}:/app" {image}'
+
+        run_cmd = {
+            "python": "python3 main.py < input.txt",
+            "cpp": "g++ main.cpp -o main && ./main < input.txt",
+            "java": "javac Main.java && java Main < input.txt"
+        }[language]
+
+        command = f'docker run --rm -v "{folder_docker}:/app" -w /app {image} sh -c "{run_cmd}"'
 
         try:
             result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
@@ -93,6 +100,7 @@ class RunCodeView(APIView):
             "output": output.strip(),
             "error": error.strip()
         })
+
 class SubmissionStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
