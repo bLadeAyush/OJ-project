@@ -1,12 +1,12 @@
 "use client";
 
-import { useParams } from "react-router-dom"; // or `useRouter` if Next.js
+import { useParams } from "react-router-dom"; 
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { toast } from "react-toastify";
 
 export default function ContestProblemsPage() {
-  const { id } = useParams(); // Get contest ID from URL
+  const { id } = useParams(); 
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
 
