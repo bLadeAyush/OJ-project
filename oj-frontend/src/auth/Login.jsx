@@ -36,8 +36,8 @@ export default function Login() {
       document.body.style.overflow = "unset";
     };
   }, []);
-  const rows = 10;
-  const hexagonsPerRow = 16;
+  const rows = 16;
+  const hexagonsPerRow = 26;
   return (
     <>
       <div className="container">

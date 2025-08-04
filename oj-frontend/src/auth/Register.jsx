@@ -10,8 +10,8 @@ const Register = () => {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const rows = 10;
-  const hexagonsPerRow = 16;
+  const rows = 16;
+  const hexagonsPerRow = 26;
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
