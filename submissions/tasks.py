@@ -46,7 +46,7 @@ def evaluate_submission(self, submission_id):
             {"input": problem.sample_input, "output": problem.sample_output}
         ]
 
-        base_path = "/home/ec2-user/oj-deploy/oj_temp"
+        base_path = os.path.join("/var/tmp/oj_temp", str(uuid.uuid4()))
         #base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../oj_temp")
         base_path = os.path.abspath(base_path)
         os.makedirs(base_path, exist_ok=True)
@@ -74,25 +74,37 @@ def evaluate_submission(self, submission_id):
                 "java": "oj-java"
             }[lang]
 
-            run_cmd = {
-                "python": "python3 main.py < input.txt",
-                "cpp": "g++ main.cpp -o main && ./main < input.txt",
-                "java": "javac Main.java && java Main < input.txt"
-                }[lang]
-            
+            compile_cmds = {
+                "python": "",
+                "cpp": "g++ main.cpp -o main",
+                "java": "javac Main.java"
+            }
+
+            exec_cmds = {
+                "python": "cat input.txt | python3 main.py",
+                "cpp": "cat input.txt | ./main",
+                "java": "cat input.txt | java Main"
+            }
+
+            compile_cmd = compile_cmds[lang]
+            exec_cmd = exec_cmds[lang]
+            full_cmd = f"{compile_cmd} && {exec_cmd}" if compile_cmd else exec_cmd
             print(f"Contents of {folder_path} before execution: {os.listdir(folder_path)}")
             print(f"Input file exists: {os.path.exists(input_path)}")
-            command = f'docker run --rm -v "{folder_path}:/app" -w /app {image} sh -c "{run_cmd}"'
+            command = (
+                f'docker run --rm -i -v "{folder_path}:/app" -w /app {image} '
+                f'sh -c "{full_cmd}"'
+            )
 
-            logger.info(f"Image selected: {image}")
-            logger.info("Folder path (host): %s", folder_path)
-            logger.info("Docker command: %s", command)
+            print(f"Image selected: {image}")
+            print("Folder path (host): %s", folder_path)
+            print("Docker command: %s", command)
 
             all_passed = True
             total_exec_time = 0
             for index, case in enumerate(test_cases):
                 with open(input_path, "w") as f:
-                    logger.info(f"Files in folder before Docker run: {os.listdir(folder_path)}")
+                    print(f"Files in folder before Docker run: {os.listdir(folder_path)}")
                     f.write(case["input"])
                 start_time = time.time()
                 result = subprocess.run(
@@ -111,9 +123,9 @@ def evaluate_submission(self, submission_id):
                 submission.output = stdout
                 submission.error = stderr
 
-                logger.info("Test Case #%d", index + 1)
-                logger.info("Input: %s", case["input"])
-                logger.info("STDOUT: %s", stdout)
+                print("Test Case #%d", index + 1)
+                print("Input: %s", case["input"])
+                print("STDOUT: %s", stdout)
                 logger.error("STDERR: %s", stderr)
 
                 if stderr:
@@ -131,6 +143,11 @@ def evaluate_submission(self, submission_id):
 
             if all_passed:
                 submission.verdict = "AC"
+                # In Django shell
+                submission.save()
+                print(f"Verdict saved: {submission.verdict}")
+
+                print("Verdict saved: %s", submission.verdict)
             submission.time_taken = round(total_exec_time, 4)
 
         except subprocess.TimeoutExpired:
@@ -143,14 +160,14 @@ def evaluate_submission(self, submission_id):
             logger.exception("Exception during evaluation:")
         finally:
             submission.save()
-            logger.info("Verdict saved: %s", submission.verdict)
+            print("Verdict saved:", submission.verdict)
             if submission.verdict in ["WA", "RE", "CE", "TLE" , "AC"]:
                 feedback = generate_ai_feedback(
                     problem, lang, statement, code,
                     submission.error, test_cases[0]["input"], test_cases[0]["output"]
                 )
                 submission.feedback = feedback
-                logger.info("Feedback generated")
+                print("Feedback generated")
                 submission.save()    
 
             try:
@@ -170,14 +187,14 @@ def evaluate_submission(self, submission_id):
                 'submission_id': submission_id
             }
 
-def generate_ai_feedback(problem, language, statement, code, stderr, input_data, output, model="models/gemini-1.5-flash-latest"):
+def generate_ai_feedback(problem, lang, statement, code, stderr, input_data, output, model="models/gemini-1.5-flash-latest"):
     try:
         prompt = f"""The following code failed a programming test.
 
 📘 Problem Statement:
 {statement}
 
-💻 Code in {language}:
+💻 Code in {lang}:
 {code}
 
 📥 Input:
