@@ -56,16 +56,16 @@ export default function Login() {
 
         <motion.form
           onSubmit={handleSubmit}
-          className="relative z-20 bg-white p-10 rounded-xl text-slate-500 w-full max-w-md  pointer-events-auto"
+          className="relative z-20 bg-white p-6 sm:p-8 md:p-10 rounded-xl text-slate-600 w-[90%] max-w-sm pointer-events-auto"
           initial={{ opacity: 0.2, y: 50 }}
           transition={{ duration: 0.3 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h1 className="text-center text-2xl text-neutral-700 font-medium">
+          <h1 className="text-center text-xl md:text-2xl font-semibold text-neutral-800">
             Sign In
           </h1>
-          <p className="text-sm text-center mb-4">
+          <p className="text-xs md:text-sm text-center text-gray-500 mb-4">
             Welcome back! Please sign in
           </p>
 

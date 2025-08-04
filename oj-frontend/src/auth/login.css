@@ -14,31 +14,52 @@ html {
   left: 0;
   min-height: 100vh;
   min-width: 100vw;
-  height: auto;
-  width: auto;
   overflow: hidden;
   animation: anim 2s linear infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
 .row {
   display: inline-flex;
-  margin-top: -32px;
-  margin-left: -50px;
+  margin-top: -28px;
 }
+
 .hexagon {
   position: relative;
-  width: 100px;
-  height: 110px;
-  margin: 1px;
+  width: 70px;
+  height: 80px;
+  margin: 2px;
   transition: 2s;
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
+
 .hexagon:hover {
   background: #0f0;
   transition: 0s;
 }
+
 .row:nth-child(even) {
-  margin-left: 1px;
+  margin-left: 35px;
 }
+
+@media (max-width: 768px) {
+  .hexagon {
+    width: 40px;
+    height: 50px;
+  }
+
+  .row {
+    margin-top: -20px;
+  }
+
+  .row:nth-child(even) {
+    margin-left: 20px;
+  }
+}
+
 @keyframes anim {
   0% {
     filter: hue-rotate(0deg);

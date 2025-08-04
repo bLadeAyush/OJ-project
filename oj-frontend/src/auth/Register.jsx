@@ -62,15 +62,15 @@ const Register = () => {
       <div className="fixed top-0 right-0 left-0 bottom-0  flex justify-center items-center z-50 pointer-events-none">
         <motion.form
           onSubmit={handleSubmit}
-          className="relative bg-white p-10 rounded-xl text-slate-600 w-[90%] max-w-md pointer-events-auto"
+          className="relative z-20 bg-white p-6 sm:p-8 md:p-10 rounded-xl text-slate-600 w-[90%] max-w-sm pointer-events-auto"
           initial={{ opacity: 0.2, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <h1 className="text-center text-2xl font-semibold text-neutral-800">
+          <h1 className="text-center text-xl md:text-2xl font-semibold text-neutral-800">
             SignUp
           </h1>
-          <p className="text-sm text-center text-gray-500 mb-4">
+          <p className="text-xs md:text-sm text-center text-gray-500 mb-4">
             Join us to explore more!
           </p>
           <div className="border px-6 py-2 flex items-center gap-2 rounded-full mt-4">
